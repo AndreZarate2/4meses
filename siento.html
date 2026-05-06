@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lo que siento por ti — Nicole ❤️</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --rose:#e8849a; --rose-deep:#c94f6b; --blush:#f5c6d0;
+      --cream:#fdf6f0; --wine:#7b2239; --gold:#d4a574;
+      --dark:#1a0a0f; --glass:rgba(255,255,255,0.07); --glass-border:rgba(255,255,255,0.14);
+    }
+    html { scroll-behavior:smooth; }
+    body {
+      font-family:'Josefin Sans',sans-serif;
+      background:var(--dark); color:var(--cream);
+      overflow-x:hidden; cursor:none; min-height:100vh;
+    }
+
+    /* Cursor */
+    .cursor { width:10px;height:10px;background:var(--rose);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:screen;transition:transform .15s,background .3s; }
+    .cursor-ring { width:32px;height:32px;border:1.5px solid var(--rose);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform .2s ease;opacity:.55; }
+
+    /* Orbs */
+    .orb { position:fixed;border-radius:50%;filter:blur(100px);opacity:.08;pointer-events:none;z-index:0; }
+    .orb-1 { width:500px;height:500px;background:var(--rose);top:-150px;right:-100px; }
+    .orb-2 { width:350px;height:350px;background:var(--wine);bottom:0;left:-100px; }
+
+    /* Back link */
+    .back-link {
+      position:fixed;top:2rem;left:2rem;z-index:50;
+      font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;
+      color:var(--blush);text-decoration:none;
+      display:flex;align-items:center;gap:.5rem;
+      opacity:.7;transition:opacity .3s,transform .3s; cursor:none;
+    }
+    .back-link:hover { opacity:1;transform:translateX(-4px); }
+
+    /* Main container */
+    .page {
+      min-height:100vh;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:6rem 2rem; position:relative; z-index:2; text-align:center;
+    }
+
+    /* Header */
+    .page-eyebrow {
+      font-size:.68rem;letter-spacing:.35em;text-transform:uppercase;
+      color:var(--gold); margin-bottom:1.2rem;
+      opacity:0;animation:fadeUp .9s ease .2s forwards;
+    }
+    .page-title {
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(2.8rem,9vw,6rem);font-weight:300;line-height:1.05;
+      background:linear-gradient(135deg,var(--blush) 0%,var(--rose) 50%,var(--gold) 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      opacity:0;animation:fadeUp 1s ease .5s forwards;
+    }
+    .page-title em { font-style:italic; }
+
+    .divider {
+      width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--rose),transparent);
+      margin:2rem auto; opacity:0;animation:fadeUp .8s ease .8s forwards;
+    }
+
+    /* Cards */
+    .cards {
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:1.5rem; max-width:900px; width:100%; margin:0 auto;
+    }
+    .card {
+      background:var(--glass);border:1px solid var(--glass-border);
+      border-radius:20px;padding:2rem 1.8rem;
+      backdrop-filter:blur(14px);
+      text-align:left; position:relative; overflow:hidden;
+      opacity:0; transform:translateY(28px);
+      transition:transform .4s ease, box-shadow .4s ease, border-color .4s ease;
+    }
+    .card.visible { animation:fadeUp .8s ease forwards; }
+    .card::before {
+      content:'';position:absolute;inset:0;
+      background:linear-gradient(135deg,rgba(201,79,107,.06),transparent 60%);
+      opacity:0;transition:opacity .4s;border-radius:20px;
+    }
+    .card:hover { transform:translateY(-6px); box-shadow:0 24px 60px rgba(201,79,107,.22); border-color:rgba(201,79,107,.35); }
+    .card:hover::before { opacity:1; }
+    .card-icon { font-size:2rem;margin-bottom:1rem;display:block;filter:drop-shadow(0 0 8px var(--rose)); }
+    .card-title {
+      font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:400;
+      color:var(--blush);margin-bottom:.8rem;
+    }
+    .card-text {
+      font-size:.82rem;line-height:1.9;color:rgba(245,198,208,.75);font-weight:200;
+    }
+
+    /* Main prose */
+    .prose-block {
+      max-width:680px; margin:3rem auto 0; text-align:center;
+      opacity:0; animation:fadeUp 1s ease 1.2s forwards;
+    }
+    .prose-block p {
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(1.05rem,2.5vw,1.35rem);line-height:2;
+      color:var(--blush);font-weight:300;margin-bottom:1.2rem;
+    }
+    .prose-block .highlight {
+      font-style:italic;color:var(--rose);
+      font-size:clamp(1.3rem,3.5vw,1.7rem);
+      display:block;margin:1.5rem 0;
+      text-shadow:0 0 20px rgba(232,132,154,.4);
+    }
+
+    /* Floating hearts */
+    .heart-container { position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden; }
+    .heart { position:absolute;bottom:-60px;font-size:1rem;opacity:0;animation:floatUp linear infinite;filter:drop-shadow(0 0 5px var(--rose)); }
+    @keyframes floatUp { 0%{transform:translateY(0) rotate(0) scale(.5);opacity:0} 10%{opacity:.7} 90%{opacity:.3} 100%{transform:translateY(-110vh) rotate(360deg) scale(1.1);opacity:0} }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+    @media(max-width:480px) { .page{padding:5rem 1.2rem;} }
+  </style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="heart-container" id="heartContainer"></div>
+
+<a class="back-link" href="index.html">← Volver</a>
+
+<main class="page">
+  <p class="page-eyebrow">Lo que guardo dentro</p>
+  <h1 class="page-title"><em>Lo que siento</em><br>por ti</h1>
+  <div class="divider"></div>
+
+  <div class="prose-block">
+    <p>
+      Nicole, hay sentimientos que no saben cómo salir. Se quedan atrapados entre el pecho y la garganta,
+      flotando en ese espacio donde las palabras nunca llegan a tiempo.
+      Esto es un intento de decirte lo que normalmente me callo.
+    </p>
+    <span class="highlight">"Lo más valioso que tenemos es que, pase lo que pase, nos quedamos."</span>
+    <p>
+      No me refiero a quedarse cuando todo es fácil, cuando los días son perfectos y las sonrisas sobran.
+      Me refiero a quedarse cuando las cosas duelen, cuando hay silencios incómodos,
+      cuando ninguno sabe exactamente qué decir pero ninguno se va.
+      Eso es lo que más me importa de nosotros.
+    </p>
+    <p>
+      Los momentos difíciles no son señales de que algo está mal.
+      Son la prueba más honesta de cuánto nos queremos.
+      Y en esos momentos, cuando podrías irte y no te vas, cuando yo podría alejarme y elijo acercarme,
+      es cuando entiendo que esto es real.
+    </p>
+    <p>
+      Quiero que sepas que contigo me siento en un lugar seguro.
+      Y eso, en este mundo tan incierto, es lo más hermoso que alguien puede darle a otra persona.
+    </p>
+  </div>
+
+  <div class="divider" style="margin-top:3rem;opacity:1;"></div>
+
+  <div class="cards" style="margin-top:2rem;">
+    <div class="card" data-delay="0">
+      <span class="card-icon">🔥</span>
+      <h3 class="card-title">Lo que me mueve</h3>
+      <p class="card-text">Me mueve la forma en que me miras cuando hablo, como si cada palabra importara. Eso me hace querer ser mejor, decir cosas que valgan la pena, estar presente de verdad.</p>
+    </div>
+    <div class="card" data-delay="150">
+      <span class="card-icon">🌙</span>
+      <h3 class="card-title">Lo que me calma</h3>
+      <p class="card-text">Tu presencia tiene algo que aquieta el ruido. No necesitas hacer nada especial. Solo estar. Y yo, con solo saber que estás, ya me siento diferente.</p>
+    </div>
+    <div class="card" data-delay="300">
+      <span class="card-icon">💪</span>
+      <h3 class="card-title">Lo que me sostiene</h3>
+      <p class="card-text">En los momentos en que el mundo se pone pesado, pienso en ti y algo dentro de mí se reorganiza. Eres parte de lo que me da fuerza para seguir.</p>
+    </div>
+    <div class="card" data-delay="450">
+      <span class="card-icon">🌹</span>
+      <h3 class="card-title">Lo más importante</h3>
+      <p class="card-text">Más allá de todo, lo que más siento es gratitud. Gratitud de que existas, de que estés en mi vida, de que hayamos elegido este camino juntos.</p>
+    </div>
+  </div>
+</main>
+
+<script>
+/* Cursor */
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e=>{mx=e.clientX;my=e.clientY;});
+(function ac(){rx+=(mx-rx)*.15;ry+=(my-ry)*.15;cursor.style.left=mx+'px';cursor.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(ac);})();
+
+/* Cards reveal */
+const cards = document.querySelectorAll('.card');
+const obs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const delay = e.target.dataset.delay || 0;
+      setTimeout(()=>{ e.target.style.animation=`fadeUp .8s ease forwards`; e.target.style.opacity=''; }, +delay);
+      obs.unobserve(e.target);
+    }
+  });
+},{threshold:.15});
+cards.forEach(c=>obs.observe(c));
+
+/* Hearts */
+const heartChars=['❤️','🩷','💕','✨'];
+const hc=document.getElementById('heartContainer');
+function spawnHeart(){
+  const h=document.createElement('div');h.className='heart';
+  h.textContent=heartChars[Math.floor(Math.random()*heartChars.length)];
+  h.style.left=Math.random()*100+'vw';
+  const dur=7+Math.random()*8;const delay=Math.random()*3;
+  h.style.animationDuration=dur+'s';h.style.animationDelay=delay+'s';
+  h.style.fontSize=(.7+Math.random()*.9)+'rem';
+  hc.appendChild(h);setTimeout(()=>h.remove(),(dur+delay)*1000+300);
+}
+setInterval(spawnHeart,1200);for(let i=0;i<6;i++)spawnHeart();
+</script>
+</body>
+</html>

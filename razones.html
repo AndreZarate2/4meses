@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Razones por las que te amo — Nicole ❤️</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    :root{
+      --rose:#e8849a;--rose-deep:#c94f6b;--blush:#f5c6d0;
+      --cream:#fdf6f0;--wine:#7b2239;--gold:#d4a574;
+      --dark:#0f0a14;--glass:rgba(255,255,255,.07);--glass-border:rgba(255,255,255,.13);
+    }
+    html{scroll-behavior:smooth;}
+    body{font-family:'Josefin Sans',sans-serif;background:var(--dark);color:var(--cream);overflow-x:hidden;cursor:none;min-height:100vh;}
+
+    /* Cursor */
+    .cursor{width:10px;height:10px;background:var(--rose);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:screen;}
+    .cursor-ring{width:32px;height:32px;border:1.5px solid var(--rose);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform .2s ease;opacity:.5;}
+
+    /* Bg */
+    .orb{position:fixed;border-radius:50%;filter:blur(100px);opacity:.07;pointer-events:none;z-index:0;}
+    .orb-1{width:450px;height:450px;background:#9b4dca;top:-80px;left:-100px;}
+    .orb-2{width:400px;height:400px;background:var(--rose-deep);bottom:-80px;right:-80px;}
+    .orb-3{width:300px;height:300px;background:var(--gold);top:50%;left:50%;transform:translate(-50%,-50%);}
+
+    /* Back */
+    .back-link{position:fixed;top:2rem;left:2rem;z-index:50;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--blush);text-decoration:none;display:flex;align-items:center;gap:.5rem;opacity:.65;transition:opacity .3s,transform .3s;cursor:none;}
+    .back-link:hover{opacity:1;transform:translateX(-4px);}
+
+    /* Hero */
+    .page{position:relative;z-index:2;padding:7rem 2rem 5rem;text-align:center;}
+    .page-eyebrow{font-size:.68rem;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;opacity:0;animation:fadeUp .9s ease .2s forwards;}
+    .page-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,9vw,6rem);font-weight:300;line-height:1.05;background:linear-gradient(135deg,var(--blush) 0%,var(--rose) 40%,var(--gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;opacity:0;animation:fadeUp 1s ease .5s forwards;}
+    .page-title em{font-style:italic;}
+    .divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--rose),transparent);margin:2rem auto;opacity:0;animation:fadeUp .8s ease .8s forwards;}
+
+    /* Reasons list */
+    .reasons{max-width:800px;margin:3rem auto 0;display:flex;flex-direction:column;gap:1.2rem;}
+    .reason{
+      display:flex;align-items:flex-start;gap:1.5rem;
+      background:var(--glass);border:1px solid var(--glass-border);
+      border-radius:18px;padding:1.8rem 1.6rem;
+      backdrop-filter:blur(14px);text-align:left;
+      opacity:0;transform:translateX(-30px);
+      transition:transform .4s ease,box-shadow .4s ease,border-color .4s;
+      position:relative;overflow:hidden;
+    }
+    .reason.visible{animation:slideIn .7s cubic-bezier(.16,1,.3,1) forwards;}
+    .reason::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--rose-deep),var(--gold));border-radius:3px 0 0 3px;opacity:0;transition:opacity .4s;}
+    .reason:hover{transform:translateX(6px)!important;box-shadow:0 16px 48px rgba(201,79,107,.2);border-color:rgba(201,79,107,.3);}
+    .reason:hover::after{opacity:1;}
+    .reason-num{
+      font-family:'Cormorant Garamond',serif;
+      font-size:2.5rem;font-weight:300;line-height:1;
+      background:linear-gradient(135deg,var(--rose),var(--gold));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      flex-shrink:0;
+    }
+    .reason-body h3{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:400;color:var(--blush);margin-bottom:.5rem;}
+    .reason-body p{font-size:.82rem;line-height:1.9;color:rgba(245,198,208,.7);font-weight:200;}
+
+    /* Special highlight */
+    .authentic-highlight{
+      max-width:680px;margin:3rem auto;
+      background:linear-gradient(135deg,rgba(201,79,107,.1),rgba(123,34,57,.12));
+      border:1px solid rgba(201,79,107,.25);border-radius:20px;
+      padding:2.5rem 2rem;text-align:center;
+      opacity:0;animation:fadeUp 1s ease 1.5s forwards;
+    }
+    .authentic-highlight p{
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(1.1rem,3vw,1.45rem);line-height:1.9;
+      color:var(--blush);font-weight:300;font-style:italic;
+    }
+    .authentic-highlight .glow-word{
+      color:var(--rose);text-shadow:0 0 16px rgba(232,132,154,.5);
+      font-weight:400;
+    }
+
+    /* Hearts */
+    .heart-container{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
+    .heart{position:absolute;bottom:-60px;opacity:0;animation:floatUp linear infinite;filter:drop-shadow(0 0 5px var(--rose));}
+    @keyframes floatUp{0%{transform:translateY(0) rotate(0) scale(.5);opacity:0}10%{opacity:.7}90%{opacity:.3}100%{transform:translateY(-110vh) rotate(360deg) scale(1.1);opacity:0}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes slideIn{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+
+    @media(max-width:480px){.page{padding:5rem 1rem 3rem;}.reason{gap:1rem;padding:1.4rem 1.2rem;}}
+  </style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
+<div class="heart-container" id="heartContainer"></div>
+
+<a class="back-link" href="index.html">← Volver</a>
+
+<main class="page">
+  <p class="page-eyebrow">Todo lo que admiro de ti</p>
+  <h1 class="page-title"><em>Razones</em> por las<br>que te amo</h1>
+  <div class="divider"></div>
+
+  <div class="authentic-highlight">
+    <p>
+      De todas las razones, la más grande es que eres
+      <span class="glow-word">completamente tú</span>.
+      Sin muros, sin máscaras, sin versiones editadas.
+      Eso es algo que no todo el mundo se atreve a hacer,
+      y en ti lo veo todos los días.
+      Tu autenticidad me enamora más de lo que cualquier palabra podría explicar.
+    </p>
+  </div>
+
+  <div class="reasons" id="reasonsList">
+    <div class="reason" data-delay="0">
+      <span class="reason-num">01</span>
+      <div class="reason-body">
+        <h3>Eres genuinamente tú misma</h3>
+        <p>No finges, no actúas, no calculas cada gesto para gustar a los demás. Eres transparente de una manera que me desarmó desde el principio. Eso es valioso, y raro, y completamente tuyo.</p>
+      </div>
+    </div>
+    <div class="reason" data-delay="120">
+      <span class="reason-num">02</span>
+      <div class="reason-body">
+        <h3>Tu forma de querer</h3>
+        <p>Cuando te importa algo o alguien, lo das todo. No a medias. Esa intensidad con la que sientes las cosas es una de las cosas más bonitas que tienes. Me hace querer ser alguien que vale esa intensidad.</p>
+      </div>
+    </div>
+    <div class="reason" data-delay="240">
+      <span class="reason-num">03</span>
+      <div class="reason-body">
+        <h3>Tu honestidad</h3>
+        <p>Me dices lo que piensas, aunque a veces no sea fácil de escuchar. Y eso, paradójicamente, es lo que más me hace confiar en ti. Con personas honestas uno puede construir cosas reales.</p>
+      </div>
+    </div>
+    <div class="reason" data-delay="360">
+      <span class="reason-num">04</span>
+      <div class="reason-body">
+        <h3>La forma en que te ríes</h3>
+        <p>Cuando algo de verdad te da risa, todo en ti lo muestra. No hay nada guardado. Tu risa llena el espacio de una manera que me hace querer buscar constantemente lo que te haga feliz.</p>
+      </div>
+    </div>
+    <div class="reason" data-delay="480">
+      <span class="reason-num">05</span>
+      <div class="reason-body">
+        <h3>Tu valentía silenciosa</h3>
+        <p>Hay cosas que cargas y enfrentas sin hacer ruido. Eso toma una fuerza que no todo el mundo tiene. Y desde fuera, viéndote, me inspira y me recuerda que vale la pena no rendirse.</p>
+      </div>
+    </div>
+    <div class="reason" data-delay="600">
+      <span class="reason-num">06</span>
+      <div class="reason-body">
+        <h3>Cómo me haces sentir</h3>
+        <p>Contigo me siento visto. No el yo que muestro al mundo, sino el de verdad. Y eso no lo da cualquier persona. Eso se construye con tiempo, con paciencia, con amor. Y tú lo construiste.</p>
+      </div>
+    </div>
+    <div class="reason" data-delay="720">
+      <span class="reason-num">07</span>
+      <div class="reason-body">
+        <h3>Que eliges quedarte</h3>
+        <p>Cada día que elegís estar aquí es un acto de amor. No lo doy por sentado. Y que me hayas elegido a mí, entre todo lo que tienes y lo que podrías tener, es algo que llevo con gratitud enorme.</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+/* Cursor */
+const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function ac(){rx+=(mx-rx)*.15;ry+=(my-ry)*.15;cursor.style.left=mx+'px';cursor.style.top=my+'px';ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(ac);})();
+
+/* Reasons reveal */
+const reasons=document.querySelectorAll('.reason');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const d=+(e.target.dataset.delay||0);
+      setTimeout(()=>e.target.classList.add('visible'),d);
+      obs.unobserve(e.target);
+    }
+  });
+},{threshold:.1});
+reasons.forEach(r=>obs.observe(r));
+
+/* Hearts */
+const heartChars=['❤️','🩷','💕','🌹','✨'];
+const hc=document.getElementById('heartContainer');
+function spawnHeart(){
+  const h=document.createElement('div');h.className='heart';
+  h.textContent=heartChars[Math.floor(Math.random()*heartChars.length)];
+  h.style.left=Math.random()*100+'vw';
+  const dur=7+Math.random()*8,delay=Math.random()*3;
+  h.style.animationDuration=dur+'s';h.style.animationDelay=delay+'s';
+  h.style.fontSize=(.7+Math.random()*.9)+'rem';
+  hc.appendChild(h);setTimeout(()=>h.remove(),(dur+delay)*1000+300);
+}
+setInterval(spawnHeart,1000);for(let i=0;i<8;i++)spawnHeart();
+</script>
+</body>
+</html>
