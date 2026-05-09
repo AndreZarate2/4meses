@@ -119,6 +119,39 @@
 
     @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
 
+    /* ===== MUSIC BUTTON ===== */
+    #music-btn {
+      position: fixed; 
+      bottom: 2rem; 
+      right: 2rem; 
+      z-index: 100;
+      width: 52px; 
+      height: 52px; 
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--rose-deep), var(--wine));
+      border: none; 
+      color: white; 
+      font-size: 1.3rem; 
+      cursor: pointer;
+      box-shadow: 0 4px 24px rgba(201,79,107,0.5);
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+    }
+    #music-btn:hover { 
+      transform: scale(1.12); 
+      box-shadow: 0 8px 32px rgba(201,79,107,0.7); 
+    }
+    #music-btn.playing { 
+      animation: spinGlow 3s linear infinite; 
+    }
+    @keyframes spinGlow {
+      0%   { box-shadow: 0 0 16px var(--rose), 0 0 32px var(--rose-deep); }
+      50%  { box-shadow: 0 0 24px var(--gold), 0 0 48px var(--rose); }
+      100% { box-shadow: 0 0 16px var(--rose), 0 0 32px var(--rose-deep); }
+    }
+
     @media(max-width:480px) { .page{padding:5rem 1.2rem;} }
   </style>
 </head>
@@ -187,6 +220,9 @@
   </div>
 </main>
 
+<!-- Music button -->
+<button id="music-btn" title="Música de fondo">🎵</button>
+
 <script>
 /* Cursor */
 const cursor = document.getElementById('cursor');
@@ -221,6 +257,66 @@ function spawnHeart(){
   hc.appendChild(h);setTimeout(()=>h.remove(),(dur+delay)*1000+300);
 }
 setInterval(spawnHeart,1200);for(let i=0;i<6;i++)spawnHeart();
+
+/* ====================== MUSIC PERSISTENTE ====================== */
+let backgroundMusic = null;
+let isPlaying = false;
+
+function createMusic() {
+  if (!backgroundMusic) {
+    backgroundMusic = new Audio('1.mp3');
+    backgroundMusic.loop = true;
+    backgroundMusic.volume = 0.65;
+  }
+  return backgroundMusic;
+}
+
+function toggleMusic() {
+  const btn = document.getElementById('music-btn');
+  createMusic();
+
+  if (isPlaying) {
+    backgroundMusic.pause();
+    btn.textContent = '🎵';
+    btn.classList.remove('playing');
+    localStorage.setItem('musicPlaying', 'false');
+  } else {
+    backgroundMusic.play().then(() => {
+      btn.textContent = '🔇';
+      btn.classList.add('playing');
+      localStorage.setItem('musicPlaying', 'true');
+      isPlaying = true;
+    }).catch(() => {
+      alert("Toca primero en cualquier parte de la página y luego presiona el botón de música");
+    });
+  }
+}
+
+function tryResumeMusic() {
+  if (localStorage.getItem('musicPlaying') === 'true') {
+    createMusic();
+    backgroundMusic.play().then(() => {
+      const btn = document.getElementById('music-btn');
+      btn.textContent = '🔇';
+      btn.classList.add('playing');
+      isPlaying = true;
+    }).catch(() => {
+      localStorage.setItem('musicPlaying', 'false');
+    });
+  }
+}
+
+// Inicializar música al cargar
+document.addEventListener('DOMContentLoaded', tryResumeMusic);
+document.getElementById('music-btn').addEventListener('click', toggleMusic);
+
+// Ayuda extra para desbloquear el audio
+document.body.addEventListener('click', () => {
+  if (localStorage.getItem('musicPlaying') === 'true' && !isPlaying) {
+    createMusic();
+    backgroundMusic.play().catch(() => {});
+  }
+}, { once: true });
 </script>
 </body>
 </html>
