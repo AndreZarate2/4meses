@@ -479,7 +479,7 @@ document.addEventListener('mousemove', e => {
   requestAnimationFrame(animCursor);
 })();
 
-// Hover effects for cursor
+// Hover effects
 document.querySelectorAll('a, button').forEach(el => {
   el.addEventListener('mouseenter', () => {
     cursor.style.transform = 'translate(-50%,-50%) scale(2.2)';
@@ -564,7 +564,7 @@ function drawParticles() {
 }
 drawParticles();
 
-// ===== CARTA - CORREGIDO =====
+// ===== CARTA =====
 const btnOpen = document.getElementById('btnOpen');
 const cartaContent = document.getElementById('cartaContent');
 
@@ -579,79 +579,74 @@ function abrirCarta() {
   }
 }
 
-// Asignamos el evento correctamente
 btnOpen.addEventListener('click', abrirCarta);
 
-// También permitimos hacer clic en todo el sobre
 document.getElementById('envelope').addEventListener('click', (e) => {
-  // Evitamos que haga doble toggle si se hace clic en el botón
-  if (e.target.tagName !== 'BUTTON') {
-    abrirCarta();
-  }
+  if (e.target.tagName !== 'BUTTON') abrirCarta();
 });
 
-// ===== MUSIC =====
-let audioCtx, gainNode, isPlaying = false;
-let melodyEnd = 0;
+// ====================== MUSIC - MEJORADA ======================
+let backgroundMusic = null;
+let isPlaying = false;
 
-const notes = [261.6, 293.6, 329.6, 349.2, 392, 440, 493.8, 523.2];
-const pattern = [0,2,4,5,4,2,0,0,5,4,2,4,5,7,5,4];
-
-function createMelody(ac) {
-  let t = ac.currentTime;
-  pattern.forEach((ni, i) => {
-    const o = ac.createOscillator();
-    const g = ac.createGain();
-    o.connect(g); 
-    g.connect(gainNode);
-    o.type = 'sine';
-    o.frequency.value = notes[ni];
-    const start = t + i * 0.45;
-    g.gain.setValueAtTime(0, start);
-    g.gain.linearRampToValueAtTime(0.18, start + 0.08);
-    g.gain.exponentialRampToValueAtTime(0.001, start + 0.42);
-    o.start(start); 
-    o.stop(start + 0.44);
-  });
-  return t + pattern.length * 0.45;
-}
-
-function scheduleMelody() {
-  if (!isPlaying) return;
-  const now = audioCtx.currentTime;
-  if (now > melodyEnd - 1) {
-    melodyEnd = createMelody(audioCtx);
+function createMusic() {
+  if (!backgroundMusic) {
+    backgroundMusic = new Audio('1.mp3');
+    backgroundMusic.loop = true;
+    backgroundMusic.volume = 0.65;
   }
-  setTimeout(scheduleMelody, 800);
+  return backgroundMusic;
 }
 
 function toggleMusic() {
   const btn = document.getElementById('music-btn');
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if (!gainNode) {
-    gainNode = audioCtx.createGain();
-    gainNode.gain.value = 0.5;
-    gainNode.connect(audioCtx.destination);
-  }
+  createMusic();
 
   if (isPlaying) {
-    isPlaying = false;
-    gainNode.gain.setTargetAtTime(0, audioCtx.currentTime, 0.5);
+    backgroundMusic.pause();
     btn.textContent = '🎵';
     btn.classList.remove('playing');
+    localStorage.setItem('musicPlaying', 'false');
   } else {
-    isPlaying = true;
-    gainNode.gain.setTargetAtTime(0.5, audioCtx.currentTime, 0.5);
-    btn.textContent = '🔇';
-    btn.classList.add('playing');
-    melodyEnd = createMelody(audioCtx);
-    scheduleMelody();
+    backgroundMusic.play().then(() => {
+      btn.textContent = '🔇';
+      btn.classList.add('playing');
+      localStorage.setItem('musicPlaying', 'true');
+      isPlaying = true;
+    }).catch(() => {
+      alert("Toca primero en cualquier parte de la página y luego presiona el botón de música");
+    });
   }
 }
 
+function tryResumeMusic() {
+  if (localStorage.getItem('musicPlaying') === 'true') {
+    createMusic();
+    backgroundMusic.play().then(() => {
+      const btn = document.getElementById('music-btn');
+      btn.textContent = '🔇';
+      btn.classList.add('playing');
+      isPlaying = true;
+    }).catch(() => {
+      localStorage.setItem('musicPlaying', 'false');
+    });
+  }
+}
+
+// Iniciar al cargar
+document.addEventListener('DOMContentLoaded', tryResumeMusic);
+
+// Botón música
 document.getElementById('music-btn').addEventListener('click', toggleMusic);
+
+// Cualquier clic en la página ayuda a desbloquear el audio
+document.body.addEventListener('click', () => {
+  if (localStorage.getItem('musicPlaying') === 'true' && !isPlaying) {
+    createMusic();
+    backgroundMusic.play().catch(() => {});
+  }
+}, { once: true });
+
 </script>
 </body>
 </html>
